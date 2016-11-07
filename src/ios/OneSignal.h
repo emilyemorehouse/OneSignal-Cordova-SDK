@@ -26,24 +26,24 @@
  */
 
 /***
- 
+
  ### Setting up the SDK ###
  Follow the documentation from https://documentation.onesignal.com/docs/installing-the-onesignal-ios-sdk to setup OneSignal in your app.
- 
+
  ### API Reference ###
  Follow the documentation from https://documentation.onesignal.com/docs/ios-sdk-api for a detailed explanation of the API.
- 
+
  ### FAQ & Troubleshoot ###
  FAQ: https://documentation.onesignal.com/docs/frequently-asked-questions-1
  Troubleshoot: https://documentation.onesignal.com/docs/common-problems-1
- 
+
  For help on how to upgrade your code from 1.* SDK to 2.*: https://documentation.onesignal.com/docs/upgrading-to-sdk-20
- 
+
  ### More ###
  iOS Configuration: https://documentation.onesignal.com/docs/generating-an-ios-push-certificate
  REST API: https://documentation.onesignal.com/docs/server-api-overview
  Create Notification API: https://documentation.onesignal.com/docs/notifications-create-notification
- 
+
  ***/
 
 #import <Foundation/Foundation.h>
@@ -70,10 +70,10 @@ typedef NS_ENUM(NSUInteger, OSNotificationActionType)  {
 typedef NS_ENUM(NSUInteger, OSNotificationDisplayType) {
     /*Notification is silent, or app is in focus but InAppAlertNotifications are disabled*/
     OSNotificationDisplayTypeNone,
-    
+
     /*Default UIAlertView display*/
     OSNotificationDisplayTypeInAppAlert,
-    
+
     /*iOS native notification display*/
     OSNotificationDisplayTypeNotification
 } ;
@@ -226,7 +226,7 @@ typedef NS_ENUM(NSUInteger, ONE_S_LOG_LEVEL) {
 
 /**
  Initialize OneSignal. Sends push token to OneSignal so you can later send notifications.
- 
+
  */
 
 // - Initialization
@@ -271,6 +271,8 @@ typedef NS_ENUM(NSUInteger, ONE_S_LOG_LEVEL) {
 
 // - Request and track user's location
 + (void)promptLocation;
+
++ (int)getNotificationTypes;
 
 // - Sends the MD5 and SHA1 of the provided email
 // Optional method that sends us the user's email as an anonymized hash so that we can better target and personalize notifications sent to that user across their devices.

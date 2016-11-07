@@ -1,6 +1,6 @@
 /**
  * Modified MIT License
- * 
+ *
  * Copyright 2016 OneSignal
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -9,13 +9,13 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * 1. The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * 2. All copies of substantial portions of the Software may only be used in connection
  * with services provided by OneSignal.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -112,8 +112,34 @@ OneSignal.prototype.deleteTags = function(keys) {
 
 // Only applies to iOS(does nothing on Android as it always silently registers)
 // Call only if you passed false to autoRegister
-OneSignal.prototype.registerForPushNotifications = function() {
-    cordova.exec(function(){}, function(){}, "OneSignalPush", "registerForPushNotifications", []);
+ OneSignal.prototype.registerForPushNotifications = function(onSuccess, onFailure) {
+    if (onSuccess === null)
+          onSuccess = function() {};
+
+      if (onFailure === null)
+          onFailure = function() {};
+
+      cordova.exec(function() {}, function() {}, "OneSignalPush", "registerForPushNotifications", []);
+
+      // Wait for the user to make a decision
+      var checkCount = 0;
+      var checkSettings = function() {
+          OneSignal.prototype.getCurrentUserNotificationSettings(function (response) {
+              if(response.types <= 0) {
+                  if(checkCount++ < 10) {
+                      checkAgain();
+                  } else {
+                      onFailure("Tried checking 10 times. Either the user denied access, or they still haven't responded.");
+                  }
+              } else {
+                  onSuccess(response.types);
+              }
+          });
+      };
+      var checkAgain = function() {
+          setTimeout(checkSettings, 1000);
+      };
+      checkSettings();
 };
 
 // Only applies to Android, vibrate is on by default but can be disabled by passing in false.
@@ -146,6 +172,10 @@ OneSignal.prototype.postNotification = function(jsonData, onSuccess, onFailure) 
 
 OneSignal.prototype.promptLocation = function() {
   cordova.exec(function(){}, function(){}, "OneSignalPush", "promptLocation", []);
+};
+
+OneSignal.prototype.getCurrentUserNotificationSettings = function(onSuccess) {
+    cordova.exec(onSuccess, function(){}, "OneSignalPush", "getCurrentUserNotificationSettings", []);
 };
 
 OneSignal.prototype.syncHashedEmail = function(email) {
